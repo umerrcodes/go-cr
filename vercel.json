@@ -1,0 +1,16 @@
+{
+  "functions": {
+    "api/*.go": {
+      "runtime": "@vercel/go"
+    },
+    "api/*/*.go": {
+      "runtime": "@vercel/go"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    }
+  ]
+} 
