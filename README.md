@@ -1,166 +1,189 @@
-# Go Task Management API with PostgreSQL 🚀
+# Task Management API
 
-This is your first Go backend project with a real database! It's a REST API for managing tasks that demonstrates core backend development concepts using PostgreSQL for data persistence.
+A clean architecture Go backend API for task management with authentication, built with Gin, GORM, and PostgreSQL.
 
-## What You'll Learn
+## Features
 
-- **HTTP Server**: How to create and run an HTTP server in Go
-- **REST API**: Building RESTful endpoints (GET, POST, PUT, DELETE)
-- **JSON Handling**: Parsing and returning JSON data
-- **Routing**: Using Gorilla Mux for URL routing
-- **Middleware**: Adding logging middleware to requests
-- **Error Handling**: Proper HTTP status codes and error responses
-- **Data Structures**: Working with structs and slices in Go
-- **Database Integration**: Connecting to PostgreSQL and executing SQL queries
-- **SQL Operations**: CREATE, INSERT, SELECT, UPDATE, DELETE operations
-- **Connection Management**: Database connection pooling and error handling
+- **Clean Architecture**: Organized into domain, repository, service, and handler layers
+- **JWT Authentication**: Secure user registration and login
+- **CRUD Operations**: Complete task management functionality
+- **PostgreSQL Database**: Using GORM for database operations
+- **Vercel Deployment**: Ready for serverless deployment
+- **Neon Database**: Configured for Neon PostgreSQL
 
 ## Project Structure
 
 ```
-.
-├── go.mod          # Go module file (dependencies)
-├── main.go         # Main application code
-├── setup.sql       # Database schema and sample data
-└── README.md       # This file
+├── cmd/api/           # Application entry point
+├── internal/
+│   ├── domain/        # Business entities and DTOs
+│   ├── repository/    # Data access layer
+│   ├── service/       # Business logic layer
+│   └── handler/       # HTTP handlers (controllers)
+├── pkg/
+│   ├── config/        # Configuration management
+│   ├── database/      # Database connection
+│   └── middleware/    # HTTP middleware
+├── api/               # Vercel serverless entry point
+└── docs/              # Documentation
 ```
 
-## How to Run
+## Quick Start
 
-1. **Install dependencies**:
-   ```bash
-   go mod tidy
-   ```
+### Prerequisites
 
-2. **Run the server**:
-   ```bash
-   go run main.go
-   ```
+- Go 1.21 or higher
+- PostgreSQL (or Neon database)
 
-3. **The server will start on port 8080** and show available endpoints.
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd dummy-backend
+```
+
+2. Install dependencies:
+```bash
+go mod tidy
+```
+
+3. Set up environment variables:
+```bash
+cp env.example .env
+```
+
+Edit `.env` with your database credentials:
+```env
+DB_DSN=postgresql://your_user:your_password@your_host/your_database?sslmode=require
+JWT_SECRET=your-super-secret-jwt-key-change-in-production
+PORT=8080
+GIN_MODE=debug
+```
+
+4. Run the application:
+```bash
+go run cmd/api/main.go
+```
 
 ## API Endpoints
 
+### Authentication
+
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Login user
+
+### Tasks (Requires Authentication)
+
+- `GET /api/tasks` - Get all tasks
+- `POST /api/tasks` - Create a new task
+- `GET /api/tasks/:id` - Get task by ID
+- `PUT /api/tasks/:id` - Update task
+- `DELETE /api/tasks/:id` - Delete task
+
 ### Health Check
-```bash
-GET /health
+
+- `GET /health` - Health check endpoint
+
+## Authentication
+
+Include the JWT token in the Authorization header:
 ```
-Returns server status and version info.
+Authorization: Bearer <your-jwt-token>
+```
+
+## Example Requests
+
+### Register User
+```bash
+curl -X POST http://localhost:8080/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@example.com", "password": "password123"}'
+```
+
+### Login
+```bash
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@example.com", "password": "password123"}'
+```
+
+### Create Task
+```bash
+curl -X POST http://localhost:8080/api/tasks \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <your-token>" \
+  -d '{"title": "Learn Go", "description": "Study Go programming language"}'
+```
 
 ### Get All Tasks
 ```bash
-GET /tasks
+curl -X GET http://localhost:8080/api/tasks \
+  -H "Authorization: Bearer <your-token>"
 ```
-Returns a list of all tasks.
 
-### Get Specific Task
+## Database Schema
+
+### Tasks Table
+```sql
+CREATE TABLE IF NOT EXISTS tasks (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    completed BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### Users Table
+```sql
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+## Deployment to Vercel
+
+1. Install Vercel CLI:
 ```bash
-GET /tasks/{id}
+npm i -g vercel
 ```
-Returns a specific task by ID.
 
-### Create New Task
+2. Login to Vercel:
 ```bash
-POST /tasks
-Content-Type: application/json
-
-{
-    "title": "Learn Go",
-    "description": "Study Go programming language"
-}
+vercel login
 ```
 
-### Update Task
+3. Deploy:
 ```bash
-PUT /tasks/{id}
-Content-Type: application/json
-
-{
-    "title": "Updated title",
-    "description": "Updated description",
-    "completed": true
-}
+vercel --prod
 ```
 
-### Delete Task
-```bash
-DELETE /tasks/{id}
-```
+4. Set environment variables in Vercel dashboard:
+   - `DB_DSN`: Your Neon database connection string
+   - `JWT_SECRET`: Your JWT secret key
+   - `GIN_MODE`: `release`
 
-## Testing the API
+## Environment Variables
 
-You can test the API using curl commands:
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `DB_DSN` | Database connection string | Required |
+| `JWT_SECRET` | JWT signing secret | `default-secret-key` |
+| `PORT` | Server port | `8080` |
+| `GIN_MODE` | Gin mode (debug/release) | `debug` |
 
-### 1. Check server health
-```bash
-curl http://localhost:8080/health
-```
+## Contributing
 
-### 2. Get all tasks
-```bash
-curl http://localhost:8080/tasks
-```
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-### 3. Create a new task
-```bash
-curl -X POST http://localhost:8080/tasks \
-  -H "Content-Type: application/json" \
-  -d '{"title": "My New Task", "description": "This is a test task"}'
-```
+## License
 
-### 4. Get a specific task
-```bash
-curl http://localhost:8080/tasks/1
-```
-
-### 5. Update a task
-```bash
-curl -X PUT http://localhost:8080/tasks/1 \
-  -H "Content-Type: application/json" \
-  -d '{"title": "Updated Task", "description": "Updated description", "completed": true}'
-```
-
-### 6. Delete a task
-```bash
-curl -X DELETE http://localhost:8080/tasks/1
-```
-
-## Key Concepts Explained
-
-### 1. **Structs** (`Task`)
-Go uses structs to define data structures. Our `Task` struct represents a task with fields like ID, Title, Description, etc.
-
-### 2. **JSON Tags**
-The `json:"id"` tags tell Go how to serialize/deserialize the struct to/from JSON.
-
-### 3. **HTTP Handlers**
-Functions like `getTasks`, `createTask` handle different HTTP requests. They take `http.ResponseWriter` and `*http.Request` parameters.
-
-### 4. **Routing with Gorilla Mux**
-We use the Gorilla Mux router to handle different URL patterns and HTTP methods.
-
-### 5. **Middleware**
-The `loggingMiddleware` function logs every request, showing how to add cross-cutting concerns.
-
-### 6. **Error Handling**
-We return appropriate HTTP status codes (200, 201, 400, 404, etc.) and error messages.
-
-## Next Steps
-
-Once you understand this project, you can extend it by:
-1. Adding a real database (PostgreSQL, MongoDB)
-2. Adding authentication/authorization
-3. Adding input validation
-4. Adding unit tests
-5. Adding configuration management
-6. Dockerizing the application
-
-## Common Go Patterns You'll See
-
-- **Error handling**: `if err != nil { ... }`
-- **Slices**: `[]Task` for storing multiple tasks
-- **Pointers**: `*http.Request` for passing references
-- **Interfaces**: `http.Handler` interface for middleware
-- **Goroutines**: (not used here, but common for concurrency)
-
-Start the server and try the API endpoints to see how everything works together! 
+This project is licensed under the MIT License. 

@@ -1,16 +1,22 @@
 {
-  "functions": {
-    "api/*.go": {
-      "runtime": "@vercel/go"
-    },
-    "api/*/*.go": {
-      "runtime": "@vercel/go"
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/main.go",
+      "use": "@vercel/go"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "dest": "/api/main.go"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/main.go"
     }
-  ]
+  ],
+  "env": {
+    "GO111MODULE": "on"
+  }
 } 
