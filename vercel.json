@@ -8,10 +8,6 @@
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/main.go"
-    },
-    {
       "src": "/(.*)",
       "dest": "/api/main.go"
     }
@@ -19,4 +15,4 @@
   "env": {
     "GO111MODULE": "on"
   }
-} 
+}  

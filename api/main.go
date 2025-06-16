@@ -8,13 +8,14 @@ import (
 	"dummy-backend/pkg/database"
 	"dummy-backend/pkg/middleware"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
-func main() {
+var router *gin.Engine
+
+func init() {
 	// Load environment variables
 	godotenv.Load()
 
@@ -40,7 +41,7 @@ func main() {
 	taskHandler := handler.NewTaskHandler(taskService)
 
 	// Initialize router
-	router := gin.New()
+	router = gin.New()
 	router.Use(gin.Recovery())
 
 	// Apply middleware
@@ -76,15 +77,9 @@ func main() {
 			tasks.DELETE("/:id", taskHandler.DeleteTask)
 		}
 	}
+}
 
-	// For Vercel deployment
-	if os.Getenv("VERCEL") == "1" {
-		// Export the router as a handler
-		http.Handle("/", router)
-		return
-	}
-
-	// For local development
-	port := ":" + cfg.Port
-	router.Run(port)
+// Handler is the exported function that Vercel will call
+func Handler(w http.ResponseWriter, r *http.Request) {
+	router.ServeHTTP(w, r)
 }
