@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"dummy-backend/internal/service"
+	"dummy-backend/lib/service"
 	"net/http"
 	"strings"
 

@@ -1,7 +1,7 @@
 package database
 
 import (
-	"dummy-backend/internal/domain"
+	"dummy-backend/lib/domain"
 	"log"
 
 	"gorm.io/driver/postgres"

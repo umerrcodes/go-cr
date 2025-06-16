@@ -1,9 +1,9 @@
 package handler
 
 import (
-	apiHandler "dummy-backend/internal/handler"
-	"dummy-backend/internal/repository"
-	"dummy-backend/internal/service"
+	apiHandler "dummy-backend/lib/handler"
+	"dummy-backend/lib/repository"
+	"dummy-backend/lib/service"
 	"dummy-backend/pkg/config"
 	"dummy-backend/pkg/database"
 	"dummy-backend/pkg/middleware"

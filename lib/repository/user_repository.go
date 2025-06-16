@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"dummy-backend/internal/domain"
+	"dummy-backend/lib/domain"
 
 	"gorm.io/gorm"
 )

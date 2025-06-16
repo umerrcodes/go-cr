@@ -1,8 +1,8 @@
 package service
 
 import (
-	"dummy-backend/internal/domain"
-	"dummy-backend/internal/repository"
+	"dummy-backend/lib/domain"
+	"dummy-backend/lib/repository"
 	"errors"
 	"time"
 

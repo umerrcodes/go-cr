@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"dummy-backend/internal/domain"
-	"dummy-backend/internal/service"
+	"dummy-backend/lib/domain"
+	"dummy-backend/lib/service"
 	"net/http"
 	"strconv"
 
