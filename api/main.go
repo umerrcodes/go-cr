@@ -1,7 +1,7 @@
-package main
+package handler
 
 import (
-	"dummy-backend/internal/handler"
+	apiHandler "dummy-backend/internal/handler"
 	"dummy-backend/internal/repository"
 	"dummy-backend/internal/service"
 	"dummy-backend/pkg/config"
@@ -37,8 +37,8 @@ func init() {
 	taskService := service.NewTaskService(taskRepo)
 
 	// Initialize handlers
-	authHandler := handler.NewAuthHandler(authService)
-	taskHandler := handler.NewTaskHandler(taskService)
+	authHandler := apiHandler.NewAuthHandler(authService)
+	taskHandler := apiHandler.NewTaskHandler(taskService)
 
 	// Initialize router
 	router = gin.New()
